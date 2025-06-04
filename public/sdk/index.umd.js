@@ -731,14 +731,10 @@
         animateButton() {
             const button = this.container.querySelector('button');
             button.classList.add('loading');
-            // Add sparkle animation
+            // Keep spinning fairy for the entire process - no jarring scale animation
             setTimeout(() => {
                 button.classList.remove('loading');
-                button.classList.add('fairydust-sparkle');
-                setTimeout(() => {
-                    button.classList.remove('fairydust-sparkle');
-                }, 600);
-            }, 1000);
+            }, 1500);
         }
         createModal() {
             const modal = document.createElement('div');
