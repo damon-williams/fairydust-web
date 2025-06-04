@@ -1,0 +1,9 @@
+{
+  "name": "fairydust-website",
+  "version": "1.0.0",
+  "description": "fairydust.fun website and SDK hosting",
+  "scripts": {
+    "dev": "npx serve public",
+    "build": "echo 'No build needed for static site'"
+  }
+}
