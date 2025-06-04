@@ -564,7 +564,7 @@
             // Use label if provided, otherwise fall back to children
             const buttonText = this.props.label || this.props.children;
             this.container.innerHTML = `
-      <button class="${className}" data-testid="fairydust-button" ${disabled}>
+      <button type="button" class="${className}" data-testid="fairydust-button" ${disabled}>
         <span>${buttonText}</span>
         <div class="fairydust-button-dust">
           <span class="fairydust-fairy">${fairy}</span>
