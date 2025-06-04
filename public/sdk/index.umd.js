@@ -90,7 +90,13 @@
         // Transaction methods
         async consumeDust(amount, description) {
             // Call ledger service for transactions
-            const ledgerUrl = this.baseUrl.replace(':8001', ':8002');
+            let ledgerUrl;
+            if (this.config.ledgerUrl) {
+                ledgerUrl = this.config.ledgerUrl.replace(/\/$/, '');
+            }
+            else {
+                ledgerUrl = this.baseUrl.replace(':8001', ':8002');
+            }
             // Get current user to extract user_id
             const user = await this.getCurrentUser();
             // Generate idempotency key
@@ -555,9 +561,11 @@
             const fairy = '🧚‍♀️';
             const disabled = this.props.disabled ? 'disabled' : '';
             const className = `fairydust-button ${this.props.className || ''} ${disabled}`.trim();
+            // Use label if provided, otherwise fall back to children
+            const buttonText = this.props.label || this.props.children;
             this.container.innerHTML = `
       <button class="${className}" data-testid="fairydust-button" ${disabled}>
-        <span>${this.props.children}</span>
+        <span>${buttonText}</span>
         <div class="fairydust-button-dust">
           <span class="fairydust-fairy">${fairy}</span>
           <span>${this.props.dustCost}</span>
