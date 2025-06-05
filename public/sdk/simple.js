@@ -881,7 +881,7 @@
             if (!element) {
                 throw new Error(`Element not found: ${selector}`);
             }
-            const component = new AccountComponent(element, this.api, props);
+            const component = new AccountComponent(this.api, element, props);
             this.accountComponents.push(component);
             return component;
         }
@@ -890,7 +890,7 @@
             if (!element) {
                 throw new Error(`Element not found: ${selector}`);
             }
-            const component = new ButtonComponent(element, this.api, props);
+            const component = new ButtonComponent(this.api, element, props);
             return component;
         }
         createAuthenticationComponent(selector, props) {
@@ -898,7 +898,7 @@
             if (!element) {
                 throw new Error(`Element not found: ${selector}`);
             }
-            const component = new AuthenticationComponent(element, this.api, props);
+            const component = new AuthenticationComponent(this.api, element, props);
             return component;
         }
         // Manual refresh method for account components
