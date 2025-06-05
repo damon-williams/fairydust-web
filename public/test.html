@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fairydust Simple SDK Test</title>
+    <link rel="stylesheet" href="sdk/fairydust.css">
+</head>
+<body>
+    <h1>Fairydust Simple SDK Test</h1>
+    
+    <div id="fairydust-account"></div>
+    
+    <br>
+    
+    <button class="fairydust-button" data-cost="2" onclick="testPayment()">
+        Pay 2 DUST to Test
+    </button>
+    
+    <script>
+        function testPayment() {
+            console.log('Test payment successful!');
+            alert('Payment successful! The yoga playlist will be generated.');
+        }
+    </script>
+    
+    <!-- Load fairydust simple SDK -->
+    <script src="sdk/simple.js?app=4c890b06-e8a0-494e-9445-5fad2e1124af"></script>
+</body>
+</html>
