@@ -516,15 +516,32 @@
         }
         // Public methods
         async refresh() {
-            if (this.isConnected) {
-                try {
+            // Always check authentication state on refresh, not just when already connected
+            try {
+                if (this.api.isAuthenticated()) {
+                    const wasConnected = this.isConnected;
                     this.user = await this.api.getCurrentUser();
+                    this.isConnected = true;
                     this.render();
                     this.props.onBalanceUpdate?.(this.user.dust_balance);
+                    // If we just became connected, notify the callback
+                    if (!wasConnected) {
+                        this.props.onConnect?.(this.user);
+                    }
                 }
-                catch (error) {
-                    console.error('Failed to refresh user:', error);
+                else {
+                    // Not authenticated
+                    this.user = null;
+                    this.isConnected = false;
+                    this.render();
                 }
+            }
+            catch (error) {
+                console.error('Failed to refresh user:', error);
+                // If we get an error (like 401), clear the connection state
+                this.user = null;
+                this.isConnected = false;
+                this.render();
             }
         }
         getUser() {
