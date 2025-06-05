@@ -1,4 +1,4 @@
-(function () {
+(function (exports) {
     'use strict';
 
     class FairydustAPI {
@@ -513,15 +513,32 @@
         }
         // Public methods
         async refresh() {
-            if (this.isConnected) {
-                try {
+            // Always check authentication state on refresh, not just when already connected
+            try {
+                if (this.api.isAuthenticated()) {
+                    const wasConnected = this.isConnected;
                     this.user = await this.api.getCurrentUser();
+                    this.isConnected = true;
                     this.render();
                     this.props.onBalanceUpdate?.(this.user.dust_balance);
+                    // If we just became connected, notify the callback
+                    if (!wasConnected) {
+                        this.props.onConnect?.(this.user);
+                    }
                 }
-                catch (error) {
-                    console.error('Failed to refresh user:', error);
+                else {
+                    // Not authenticated
+                    this.user = null;
+                    this.isConnected = false;
+                    this.render();
                 }
+            }
+            catch (error) {
+                console.error('Failed to refresh user:', error);
+                // If we get an error (like 401), clear the connection state
+                this.user = null;
+                this.isConnected = false;
+                this.render();
             }
         }
         getUser() {
@@ -581,9 +598,23 @@
                     this.showAuthentication();
                     return;
                 }
-                // Refresh user data to get latest balance
-                this.user = await this.api.getCurrentUser();
-                this.isConnected = true;
+                // Try to refresh user data to get latest balance
+                // If this fails with 401, the token is invalid and we need to re-authenticate
+                try {
+                    this.user = await this.api.getCurrentUser();
+                    this.isConnected = true;
+                }
+                catch (authError) {
+                    // If we get a 401, the token is expired/invalid - show authentication
+                    if (authError.message && authError.message.includes('401')) {
+                        // Clear invalid tokens
+                        this.api.clearTokens();
+                        this.showAuthentication();
+                        return;
+                    }
+                    // Re-throw other errors
+                    throw authError;
+                }
                 // Check if user has sufficient balance
                 if (this.user.dust_balance < this.props.dustCost) {
                     this.showInsufficientBalance();
@@ -647,15 +678,15 @@
           <div class="fairydust-current-balance">
             Your current balance: <strong>${this.user.dust_balance} DUST</strong>
           </div>
-          <div style="margin: 16px 0; padding: 12px; background: #f8f9fa; border-radius: 6px; text-align: left;">
-            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px;">
-              <input type="checkbox" id="skip-confirmations" style="margin: 0;">
+          <div style="margin: 16px 0; padding: 8px 12px; background: #f8f9fa; border-radius: 6px; display: flex; justify-content: center;">
+            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 12px;">
+              <input type="checkbox" id="skip-confirmations" style="margin: 0; flex-shrink: 0;">
               <span>Skip confirmations</span>
             </label>
           </div>
           <div class="fairydust-actions">
             <button class="fairydust-button-primary" data-action="confirm">
-              Confirm & Use Dust
+              Confirm
             </button>
             <button class="fairydust-button-secondary" data-action="cancel">
               Cancel
@@ -805,6 +836,15 @@
         }
     }
 
+    /**
+     * Fairydust Simple Integration (Standalone)
+     *
+     * Usage:
+     * <link rel="stylesheet" href="https://fairydust.fun/sdk/fairydust.css">
+     * <script src="https://fairydust.fun/sdk/simple.js?app=YOUR_APP_ID"></script>
+     * <button class="fairydust-button" data-cost="5" onclick="yourFunction()">Pay with Dust</button>
+     */
+    // Import without CSS to avoid build issues
     class Fairydust {
         constructor(config) {
             this.accountComponents = [];
@@ -834,78 +874,39 @@
                 return { isConnected: false };
             }
         }
-        // Component factory methods
-        createAccountComponent(container, props = {}) {
-            const element = typeof container === 'string'
-                ? document.querySelector(container)
-                : container;
+        // Component creation methods
+        createAccountComponent(selector, props = {}) {
+            const element = typeof selector === 'string' ? document.querySelector(selector) : selector;
             if (!element) {
-                throw new Error('Container element not found');
+                throw new Error(`Element not found: ${selector}`);
             }
-            const component = new AccountComponent(this.api, element, props);
+            const component = new AccountComponent(element, this.api, props);
             this.accountComponents.push(component);
             return component;
         }
-        createButtonComponent(container, props) {
-            const element = typeof container === 'string'
-                ? document.querySelector(container)
-                : container;
+        createButtonComponent(selector, props) {
+            const element = typeof selector === 'string' ? document.querySelector(selector) : selector;
             if (!element) {
-                throw new Error('Container element not found');
+                throw new Error(`Element not found: ${selector}`);
             }
-            // Wrap the onSuccess callback to refresh account components
-            const originalOnSuccess = props.onSuccess;
-            props.onSuccess = (transaction) => {
-                // Refresh all account components
-                this.refreshAccountComponents();
-                // Call original callback if provided
-                originalOnSuccess?.(transaction);
-            };
-            return new ButtonComponent(this.api, element, props);
+            const component = new ButtonComponent(element, this.api, props);
+            return component;
         }
-        createAuthenticationComponent(container, props) {
-            const element = typeof container === 'string'
-                ? document.querySelector(container)
-                : container;
+        createAuthenticationComponent(selector, props) {
+            const element = typeof selector === 'string' ? document.querySelector(selector) : selector;
             if (!element) {
-                throw new Error('Container element not found');
+                throw new Error(`Element not found: ${selector}`);
             }
-            return new AuthenticationComponent(this.api, element, props);
+            const component = new AuthenticationComponent(element, this.api, props);
+            return component;
         }
-        // Convenience methods
-        async isConnected() {
-            return this.api.checkConnection();
-        }
-        async getCurrentUser() {
-            try {
-                return await this.api.getCurrentUser();
-            }
-            catch {
-                return null;
-            }
-        }
-        async logout() {
-            return this.api.logout();
-        }
-        // Component management
+        // Manual refresh method for account components
         async refreshAccountComponents() {
             for (const component of this.accountComponents) {
-                await component.refresh();
+                await component.refreshState();
             }
         }
-        // Static factory method
-        static create(config) {
-            return new Fairydust(config);
-        }
     }
-
-    /**
-     * Fairydust Simple Integration
-     *
-     * Usage:
-     * <script src="https://fairydust.fun/sdk/simple.js?app=YOUR_APP_ID"></script>
-     * <button class="fairydust-button" data-cost="5" onclick="yourFunction()">Pay with Dust</button>
-     */
     // Get app ID from script tag
     function getAppIdFromScript() {
         const scripts = document.getElementsByTagName('script');
@@ -1033,5 +1034,9 @@
         });
     }
 
-})();
+    exports.Fairydust = Fairydust;
+
+    return exports;
+
+})({});
 //# sourceMappingURL=simple.js.map
