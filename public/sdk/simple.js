@@ -931,8 +931,8 @@
             // Initialize Fairydust
             const fairydust = new Fairydust({
                 appId,
-                apiUrl: 'https://api.fairydust.fun',
-                ledgerUrl: 'https://ledger.fairydust.fun'
+                apiUrl: 'https://identity-production-7e32.up.railway.app',
+                ledgerUrl: 'https://ledger-production-5ce2.up.railway.app'
             });
             // Store instance globally for optional advanced usage
             window.fairydust = fairydust;
