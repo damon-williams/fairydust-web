@@ -653,7 +653,7 @@
           <div style="margin: 16px 0; padding: 12px; background: #f8f9fa; border-radius: 6px; text-align: left;">
             <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px;">
               <input type="checkbox" id="skip-confirmations" style="margin: 0;">
-              <span>Skip confirmations for future actions</span>
+              <span>Skip confirmations</span>
             </label>
           </div>
           <div class="fairydust-actions">
