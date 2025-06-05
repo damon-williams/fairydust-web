@@ -592,8 +592,22 @@
                     this.showInsufficientBalance();
                     return;
                 }
-                // Show confirmation
-                this.showConfirmation();
+                // Check if user has disabled confirmations
+                const skipConfirmations = localStorage.getItem(`fairydust_${this.api.config.appId}_skip_confirmations`) === 'true';
+                if (skipConfirmations) {
+                    // Direct payment without confirmation
+                    this.animateButton();
+                    const transaction = await this.api.consumeDust(this.props.dustCost, `${this.props.children} - ${document.title || 'App'}`);
+                    // Update user balance
+                    if (this.user) {
+                        this.user.dust_balance -= this.props.dustCost;
+                    }
+                    this.props.onSuccess?.(transaction);
+                }
+                else {
+                    // Show confirmation modal
+                    this.showConfirmation();
+                }
             }
             catch (error) {
                 console.error('Button click error:', error);
@@ -635,6 +649,12 @@
           <div class="fairydust-dust-amount">${this.props.dustCost} <span style="font-size: 24px;">DUST</span></div>
           <div class="fairydust-current-balance">
             Your current balance: <strong>${this.user.dust_balance} DUST</strong>
+          </div>
+          <div style="margin: 16px 0; padding: 12px; background: #f8f9fa; border-radius: 6px; text-align: left;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px;">
+              <input type="checkbox" id="skip-confirmations" style="margin: 0;">
+              <span>Skip confirmations for future actions</span>
+            </label>
           </div>
           <div class="fairydust-actions">
             <button class="fairydust-button-primary" data-action="confirm">
@@ -683,6 +703,11 @@
                 const action = target.getAttribute('data-action');
                 switch (action) {
                     case 'confirm':
+                        // Check if user wants to skip future confirmations
+                        const checkbox = modal.querySelector('#skip-confirmations');
+                        if (checkbox?.checked) {
+                            localStorage.setItem(`fairydust_${this.api.config.appId}_skip_confirmations`, 'true');
+                        }
                         await this.consumeDust(modal);
                         break;
                     case 'cancel':
