@@ -584,9 +584,23 @@
                     this.showAuthentication();
                     return;
                 }
-                // Refresh user data to get latest balance
-                this.user = await this.api.getCurrentUser();
-                this.isConnected = true;
+                // Try to refresh user data to get latest balance
+                // If this fails with 401, the token is invalid and we need to re-authenticate
+                try {
+                    this.user = await this.api.getCurrentUser();
+                    this.isConnected = true;
+                }
+                catch (authError) {
+                    // If we get a 401, the token is expired/invalid - show authentication
+                    if (authError.message && authError.message.includes('401')) {
+                        // Clear invalid tokens
+                        this.api.clearTokens();
+                        this.showAuthentication();
+                        return;
+                    }
+                    // Re-throw other errors
+                    throw authError;
+                }
                 // Check if user has sufficient balance
                 if (this.user.dust_balance < this.props.dustCost) {
                     this.showInsufficientBalance();
