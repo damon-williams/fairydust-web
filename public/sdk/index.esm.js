@@ -675,9 +675,9 @@ class ButtonComponent {
           <div class="fairydust-current-balance">
             Your current balance: <strong>${this.user.dust_balance} DUST</strong>
           </div>
-          <div style="margin: 16px 0; padding: 8px 12px; background: #f8f9fa; border-radius: 6px; display: flex; justify-content: center; min-width: 0;">
-            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 12px; white-space: nowrap; flex-shrink: 0;">
-              <input type="checkbox" id="skip-confirmations" style="margin: 0; flex-shrink: 0;">
+          <div style="margin: 16px 0; padding: 8px 12px; background: #f8f9fa; border-radius: 6px; text-align: center;">
+            <label style="display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-size: 12px; white-space: nowrap;">
+              <input type="checkbox" id="skip-confirmations" style="margin: 0;">
               <span>Skip confirmations</span>
             </label>
           </div>
