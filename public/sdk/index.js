@@ -398,7 +398,7 @@ class AccountComponent {
         this.container.innerHTML = `
       <div class="fairydust-account ${stateClass}" data-testid="fairydust-account">
         <span class="fairydust-fairy">${fairy}</span>
-        <span class="fairydust-balance">${balance}</span>
+        ${this.isConnected ? `<span class="fairydust-balance">${balance}</span>` : ''}
       </div>
     `;
         const element = this.container.querySelector('.fairydust-account');
