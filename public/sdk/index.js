@@ -172,8 +172,8 @@ class AuthenticationComponent {
       <div class="fairydust-modal-content">
         <button class="fairydust-close">&times;</button>
         <div class="fairydust-auth">
-          <h2>Connect with fairydust</h2>
-          <p><strong>${this.props.appName}</strong> uses fairydust to help cover AI costs. New users get 25 dust for free by providing phone or email.</p>
+          <h2>Powered by fairydust</h2>
+          <p><strong>${this.props.appName}</strong> uses fairydust to help cover AI costs. New users get 25 DUST for free by providing phone or email.</p>
           
           <form class="fairydust-form" data-testid="auth-form">
             <div>
