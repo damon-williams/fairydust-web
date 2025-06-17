@@ -954,8 +954,8 @@ if (typeof window !== 'undefined') {
     window.fairydustInit = function(appId, options = {}) {
         const fairydust = new Fairydust({
             appId,
-            apiUrl: options.apiUrl || 'https://identity-production-7e32.up.railway.app',
-            ledgerUrl: options.ledgerUrl || 'https://ledger-production-5ce2.up.railway.app',
+            apiUrl: options.apiUrl || 'https://fairydust-identity-production.up.railway.app',
+            ledgerUrl: options.ledgerUrl || 'https://fairydust-identity-production.up.railway.app',
             debug: options.debug
         });
         
@@ -1086,8 +1086,8 @@ if (typeof window !== 'undefined') {
             // Initialize Fairydust
             const fairydust = new Fairydust({
                 appId,
-                apiUrl: 'https://identity-production-7e32.up.railway.app',
-                ledgerUrl: 'https://ledger-production-5ce2.up.railway.app'
+                apiUrl: 'https://fairydust-identity-production.up.railway.app',
+                ledgerUrl: 'https://fairydust-identity-production.up.railway.app'
             });
             // Store instance globally for optional advanced usage
             window.fairydust = fairydust;
