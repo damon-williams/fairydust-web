@@ -3,107 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>fairydust - AI Payments Made Simple</title>
+    <title>fairydust - Discover the Magic of AI</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
             color: #333;
-            max-width: 800px;
+            background: linear-gradient(135deg, #fef7ff 0%, #f0f9ff 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
+        
+        header {
+            text-align: center;
+            padding: 60px 0;
+        }
+        
+        .logo {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+        
         h1 {
             color: #7c3aed;
-            font-size: 3em;
-            margin-bottom: 0.5em;
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            font-weight: 700;
         }
+        
         .tagline {
             font-size: 1.5em;
             color: #666;
-            margin-bottom: 2em;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
-        .cta {
+        
+        .apps-section {
+            margin: 80px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5em;
+            color: #7c3aed;
+            margin-bottom: 60px;
+        }
+        
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+        
+        .app-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .app-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(124, 58, 237, 0.15);
+            border-color: #7c3aed;
+        }
+        
+        .app-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .app-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .app-description {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        
+        .app-link {
             background: #7c3aed;
             color: white;
             padding: 15px 30px;
             text-decoration: none;
-            border-radius: 8px;
+            border-radius: 50px;
             display: inline-block;
-            margin-right: 20px;
-            margin-bottom: 10px;
+            font-weight: 600;
+            transition: background 0.3s ease;
         }
-        .cta:hover {
+        
+        .app-link:hover {
             background: #6b2ec5;
         }
-        pre {
-            background: #f5f5f5;
-            padding: 20px;
-            border-radius: 8px;
-            overflow-x: auto;
+        
+        .developer-section {
+            text-align: center;
+            padding: 80px 0;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+            margin: 80px 0;
         }
-        .section {
-            margin: 3em 0;
+        
+        .developer-cta {
+            background: #333;
+            color: white;
+            padding: 20px 40px;
+            text-decoration: none;
+            border-radius: 50px;
+            display: inline-block;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: background 0.3s ease;
         }
-        .fairy {
-            font-size: 2em;
-            vertical-align: middle;
+        
+        .developer-cta:hover {
+            background: #555;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5em;
+            }
+            
+            .tagline {
+                font-size: 1.2em;
+            }
+            
+            .apps-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .app-card {
+                padding: 30px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1><span class="fairy">🧚‍♀️</span> fairydust</h1>
-    <p class="tagline">AI Payments Made Simple</p>
-    
-    <div class="section">
-        <h2>Quick Integration</h2>
-        <pre><code>&lt;script src="https://fairydust.fun/sdk/index.umd.js"&gt;&lt;/script&gt;
-&lt;link rel="stylesheet" href="https://fairydust.fun/sdk/fairydust.css"&gt;
-
-&lt;script&gt;
-const fairydust = new Fairydust.Fairydust({
-    appId: 'YOUR-APP-ID'
-});
-
-fairydust.createButtonComponent('#pay-button', {
-    dustCost: 5,
-    label: 'Generate with AI',
-    onSuccess: () => doYourAIWork()
-});
-&lt;/script&gt;</code></pre>
-    </div>
-
-    <div class="section">
-        <a href="https://fairydust-apps-production.up.railway.app/docs" class="cta">Register Your App</a>
-        <a href="https://fairydust-identity-production.up.railway.app/docs" class="cta">API Documentation</a>
-    </div>
-
-    <div class="section">
-        <h2>For Developers</h2>
-        <ul>
-            <li><strong>Simple Integration:</strong> Just a few lines of code</li>
-            <li><strong>Instant Payments:</strong> Users pay with DUST tokens</li>
-            <li><strong>No Backend Required:</strong> Handle payments entirely in the browser</li>
-            <li><strong>Fair Pricing:</strong> You set your own DUST prices</li>
-        </ul>
-    </div>
-
-    <div class="section">
-        <h2>SDK Files</h2>
-        <ul>
-            <li><a href="/sdk/index.umd.js">JavaScript SDK (UMD)</a></li>
-            <li><a href="/sdk/fairydust.css">CSS Styles</a></li>
-        </ul>
-    </div>
-
-    <div class="section">
-        <h2>Coming Soon</h2>
-        <ul>
-            <li>NPM package: <code>@fairydust/sdk</code></li>
-            <li>Sandbox environment for testing</li>
-            <li>Builder dashboard</li>
-            <li>Webhook notifications</li>
-        </ul>
+    <div class="container">
+        <header>
+            <div class="logo">🧚‍♀️</div>
+            <h1>fairydust</h1>
+            <p class="tagline">Discover the magic of AI-powered apps that make everyday tasks delightful</p>
+        </header>
+        
+        <section class="apps-section">
+            <h2 class="section-title">Magical Apps Powered by AI</h2>
+            
+            <div class="apps-grid">
+                <div class="app-card">
+                    <span class="app-icon">🧘‍♀️</span>
+                    <h3 class="app-title">Yoga Playlists</h3>
+                    <p class="app-description">AI-curated music playlists perfectly matched to your yoga practice. Find your flow with the perfect soundtrack.</p>
+                    <a href="https://yoga-playlist-app.vercel.app/" class="app-link" target="_blank">Start Your Practice</a>
+                </div>
+                
+                <div class="app-card">
+                    <span class="app-icon">👨‍🍳</span>
+                    <h3 class="app-title">Recipe Agent</h3>
+                    <p class="app-description">Your AI cooking companion that creates personalized recipes based on your ingredients, dietary needs, and cravings.</p>
+                    <a href="https://recipe-agent-team-production.up.railway.app/" class="app-link" target="_blank">Cook Something Amazing</a>
+                </div>
+                
+                <div class="app-card">
+                    <span class="app-icon">😂</span>
+                    <h3 class="app-title">Dad Jokes</h3>
+                    <p class="app-description">AI-generated dad jokes that are so bad, they're good. Perfect for breaking the ice or making someone groan with laughter.</p>
+                    <a href="https://dad-joke-generator-eta.vercel.app/" class="app-link" target="_blank">Tell Me a Joke</a>
+                </div>
+            </div>
+        </section>
+        
+        <section class="developer-section">
+            <h2 style="margin-bottom: 20px; color: #333;">Build Your Own Magic</h2>
+            <p style="margin-bottom: 30px; color: #666; font-size: 1.1em;">Ready to create AI-powered apps with simple micropayments?</p>
+            <a href="/developer" class="developer-cta">Developer Documentation</a>
+        </section>
+        
+        <footer>
+            <p>&copy; 2024 fairydust. Making AI magical, one app at a time.</p>
+        </footer>
     </div>
 </body>
 </html>
