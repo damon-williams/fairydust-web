@@ -928,5 +928,269 @@ class Fairydust {
     }
 }
 
+// Get app ID from script tag
+function getAppIdFromScript() {
+    const scripts = document.getElementsByTagName('script');
+    for (let i = 0; i < scripts.length; i++) {
+        const src = scripts[i].src;
+        if (src && src.includes('fairydust') && src.includes('app=')) {
+            const urlParams = new URLSearchParams(src.split('?')[1]);
+            return urlParams.get('app');
+        }
+    }
+    return null;
+}
+
+// Initialize on load
+if (typeof window !== 'undefined') {
+    // Always expose constructor globally for compatibility
+    window.Fairydust = { Fairydust };
+    
+    // Expose manual initialization function for React/SPA frameworks
+    window.fairydustInit = function(appId, options = {}) {
+        const fairydust = new Fairydust({
+            appId,
+            apiUrl: options.apiUrl || 'https://identity-production-7e32.up.railway.app',
+            ledgerUrl: options.ledgerUrl || 'https://ledger-production-5ce2.up.railway.app',
+            debug: options.debug
+        });
+        
+        // Store instance globally
+        window.fairydust = fairydust;
+        
+        // Auto-enhance existing buttons if requested
+        if (options.autoEnhance !== false) {
+            const enhanceButtons = () => {
+                const buttons = document.querySelectorAll('button.fairydust-button');
+                buttons.forEach((button) => {
+                    const btn = button;
+                    if (btn.dataset.fairydustEnhanced === 'true') return;
+                    
+                    const cost = parseInt(btn.dataset.cost || '1');
+                    const originalOnclick = btn.onclick;
+                    
+                    // For React compatibility, don't wrap - replace in place
+                    if (options.reactMode) {
+                        // Store original content and replace button
+                        const originalContent = btn.innerHTML;
+                        const originalClasses = btn.className;
+                        
+                        fairydust.createButtonComponent(btn.parentNode, {
+                            dustCost: cost,
+                            children: originalContent,
+                            disabled: btn.disabled,
+                            className: originalClasses.replace('fairydust-button', ''),
+                            onSuccess: async (transaction) => {
+                                if (originalOnclick) {
+                                    originalOnclick.call(btn, new MouseEvent('click', { bubbles: true }));
+                                }
+                                btn.dispatchEvent(new CustomEvent('fairydust:success', {
+                                    detail: { transaction },
+                                    bubbles: true
+                                }));
+                            },
+                            onError: (error) => {
+                                console.error('[Fairydust] Payment failed:', error);
+                                btn.dispatchEvent(new CustomEvent('fairydust:error', {
+                                    detail: { error },
+                                    bubbles: true
+                                }));
+                            }
+                        });
+                        btn.remove(); // Remove original button
+                    } else {
+                        // Standard wrapping behavior
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'fairydust-button-wrapper';
+                        wrapper.style.display = 'inline-block';
+                        btn.parentNode?.insertBefore(wrapper, btn);
+                        wrapper.appendChild(btn);
+                        btn.style.display = 'none';
+                        
+                        fairydust.createButtonComponent(wrapper, {
+                            dustCost: cost,
+                            children: btn.innerHTML,
+                            disabled: btn.disabled,
+                            onSuccess: async (transaction) => {
+                                if (originalOnclick) {
+                                    originalOnclick.call(btn, new MouseEvent('click', { bubbles: true }));
+                                }
+                                btn.dispatchEvent(new CustomEvent('fairydust:success', {
+                                    detail: { transaction },
+                                    bubbles: true
+                                }));
+                            },
+                            onError: (error) => {
+                                console.error('[Fairydust] Payment failed:', error);
+                                btn.dispatchEvent(new CustomEvent('fairydust:error', {
+                                    detail: { error },
+                                    bubbles: true
+                                }));
+                            }
+                        });
+                    }
+                    
+                    btn.dataset.fairydustEnhanced = 'true';
+                });
+            };
+            
+            enhanceButtons();
+            
+            // Only add MutationObserver if not in React mode
+            if (!options.reactMode) {
+                let enhanceTimeout;
+                const observer = new MutationObserver(() => {
+                    clearTimeout(enhanceTimeout);
+                    enhanceTimeout = setTimeout(() => {
+                        enhanceButtons();
+                    }, 100);
+                });
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true
+                });
+            }
+        }
+        
+        // Auto-create account component if element exists
+        const accountElement = document.getElementById('fairydust-account');
+        if (accountElement) {
+            fairydust.createAccountComponent(accountElement, {
+                onConnect: (user) => {
+                    console.log('[Fairydust] User connected:', user);
+                },
+                onDisconnect: () => {
+                    console.log('[Fairydust] User disconnected');
+                }
+            });
+        }
+        
+        console.log('[Fairydust] Manually initialized! App ID:', appId);
+        return fairydust;
+    };
+    
+    // Allow disabling auto-initialization for React/SPA frameworks
+    if (window.fairydustNoAutoInit) {
+        console.log('[Fairydust] Auto-initialization disabled. Use manual initialization.');
+    } else {
+        window.addEventListener('DOMContentLoaded', () => {
+            const appId = getAppIdFromScript();
+            if (!appId) {
+                console.error('[Fairydust] No app ID found. Add ?app=YOUR_APP_ID to the script URL');
+                return;
+            }
+            // Initialize Fairydust
+            const fairydust = new Fairydust({
+                appId,
+                apiUrl: 'https://identity-production-7e32.up.railway.app',
+                ledgerUrl: 'https://ledger-production-5ce2.up.railway.app'
+            });
+            // Store instance globally for optional advanced usage
+            window.fairydust = fairydust;
+            // Auto-enhance all buttons with class "fairydust-button"
+            const enhanceButtons = () => {
+                const buttons = document.querySelectorAll('button.fairydust-button');
+                buttons.forEach((button) => {
+                    const btn = button;
+                    // Skip if already enhanced
+                    if (btn.dataset.fairydustEnhanced === 'true')
+                        return;
+                    // Get cost from data attribute
+                    const cost = parseInt(btn.dataset.cost || '1');
+                    // Store original onclick
+                    const originalOnclick = btn.onclick;
+                    // Create wrapper div
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'fairydust-button-wrapper';
+                    wrapper.style.display = 'inline-block';
+                    // Insert wrapper and move button into it
+                    btn.parentNode?.insertBefore(wrapper, btn);
+                    wrapper.appendChild(btn);
+                    // Hide original button
+                    btn.style.display = 'none';
+                    // Create Fairydust button in wrapper
+                    fairydust.createButtonComponent(wrapper, {
+                        dustCost: cost,
+                        children: btn.innerHTML,
+                        disabled: btn.disabled,
+                        onSuccess: async (transaction) => {
+                            // Call original onclick if it exists
+                            if (originalOnclick) {
+                                originalOnclick.call(btn, new MouseEvent('click', { bubbles: true }));
+                            }
+                            // The main SDK automatically refreshes account components after successful payments
+                            // Also dispatch a custom event for flexibility
+                            btn.dispatchEvent(new CustomEvent('fairydust:success', {
+                                detail: { transaction },
+                                bubbles: true
+                            }));
+                        },
+                        onError: (error) => {
+                            console.error('[Fairydust] Payment failed:', error);
+                            btn.dispatchEvent(new CustomEvent('fairydust:error', {
+                                detail: { error },
+                                bubbles: true
+                            }));
+                        }
+                    });
+                    // Mark as enhanced
+                    btn.dataset.fairydustEnhanced = 'true';
+                    // Watch for disabled state changes
+                    const observer = new MutationObserver((mutations) => {
+                        mutations.forEach((mutation) => {
+                            if (mutation.attributeName === 'disabled') {
+                                // Re-render the button with new disabled state
+                                fairydust.createButtonComponent(wrapper, {
+                                    dustCost: cost,
+                                    children: btn.innerHTML,
+                                    disabled: btn.disabled,
+                                    onSuccess: async (transaction) => {
+                                        if (originalOnclick) {
+                                            originalOnclick.call(btn, new MouseEvent('click', { bubbles: true }));
+                                        }
+                                        btn.dispatchEvent(new CustomEvent('fairydust:success', {
+                                            detail: { transaction },
+                                            bubbles: true
+                                        }));
+                                    }
+                                });
+                            }
+                        });
+                    });
+                    observer.observe(btn, { attributes: true, attributeFilter: ['disabled'] });
+                });
+            };
+            // Enhance buttons on load
+            enhanceButtons();
+            // Support dynamically added buttons (with throttling to prevent React conflicts)
+            let enhanceTimeout;
+            const observer = new MutationObserver(() => {
+                // Throttle enhancements to prevent infinite loops with React
+                clearTimeout(enhanceTimeout);
+                enhanceTimeout = setTimeout(() => {
+                    enhanceButtons();
+                }, 100);
+            });
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+            // Optional: Add account widget if element exists
+            const accountElement = document.getElementById('fairydust-account');
+            if (accountElement) {
+                fairydust.createAccountComponent(accountElement, {
+                    onConnect: (user) => {
+                        console.log('[Fairydust] User connected:', user);
+                    },
+                    onDisconnect: () => {
+                        console.log('[Fairydust] User disconnected');
+                    }
+                });
+            }
+            console.log('[Fairydust] Ready! App ID:', appId);
+        });
+    }
+}
+
 export { AccountComponent, AuthenticationComponent, ButtonComponent, Fairydust, FairydustAPI, Fairydust as default };
 //# sourceMappingURL=index.esm.js.map

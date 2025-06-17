@@ -922,6 +922,138 @@
     }
     // Initialize on load
     if (typeof window !== 'undefined') {
+        // Always expose constructor globally for compatibility
+        window.Fairydust = { Fairydust };
+        
+        // Expose manual initialization function for React/SPA frameworks
+        window.fairydustInit = function(appId, options = {}) {
+            const fairydust = new Fairydust({
+                appId,
+                apiUrl: options.apiUrl || 'https://identity-production-7e32.up.railway.app',
+                ledgerUrl: options.ledgerUrl || 'https://ledger-production-5ce2.up.railway.app',
+                debug: options.debug
+            });
+            
+            // Store instance globally
+            window.fairydust = fairydust;
+            
+            // Auto-enhance existing buttons if requested
+            if (options.autoEnhance !== false) {
+                const enhanceButtons = () => {
+                    const buttons = document.querySelectorAll('button.fairydust-button');
+                    buttons.forEach((button) => {
+                        const btn = button;
+                        if (btn.dataset.fairydustEnhanced === 'true') return;
+                        
+                        const cost = parseInt(btn.dataset.cost || '1');
+                        const originalOnclick = btn.onclick;
+                        
+                        // For React compatibility, don't wrap - replace in place
+                        if (options.reactMode) {
+                            // Store original content and replace button
+                            const originalContent = btn.innerHTML;
+                            const originalClasses = btn.className;
+                            
+                            fairydust.createButtonComponent(btn.parentNode, {
+                                dustCost: cost,
+                                children: originalContent,
+                                disabled: btn.disabled,
+                                className: originalClasses.replace('fairydust-button', ''),
+                                onSuccess: async (transaction) => {
+                                    if (originalOnclick) {
+                                        originalOnclick.call(btn, new MouseEvent('click', { bubbles: true }));
+                                    }
+                                    btn.dispatchEvent(new CustomEvent('fairydust:success', {
+                                        detail: { transaction },
+                                        bubbles: true
+                                    }));
+                                },
+                                onError: (error) => {
+                                    console.error('[Fairydust] Payment failed:', error);
+                                    btn.dispatchEvent(new CustomEvent('fairydust:error', {
+                                        detail: { error },
+                                        bubbles: true
+                                    }));
+                                }
+                            });
+                            btn.remove(); // Remove original button
+                        } else {
+                            // Standard wrapping behavior
+                            const wrapper = document.createElement('div');
+                            wrapper.className = 'fairydust-button-wrapper';
+                            wrapper.style.display = 'inline-block';
+                            btn.parentNode?.insertBefore(wrapper, btn);
+                            wrapper.appendChild(btn);
+                            btn.style.display = 'none';
+                            
+                            fairydust.createButtonComponent(wrapper, {
+                                dustCost: cost,
+                                children: btn.innerHTML,
+                                disabled: btn.disabled,
+                                onSuccess: async (transaction) => {
+                                    if (originalOnclick) {
+                                        originalOnclick.call(btn, new MouseEvent('click', { bubbles: true }));
+                                    }
+                                    btn.dispatchEvent(new CustomEvent('fairydust:success', {
+                                        detail: { transaction },
+                                        bubbles: true
+                                    }));
+                                },
+                                onError: (error) => {
+                                    console.error('[Fairydust] Payment failed:', error);
+                                    btn.dispatchEvent(new CustomEvent('fairydust:error', {
+                                        detail: { error },
+                                        bubbles: true
+                                    }));
+                                }
+                            });
+                        }
+                        
+                        btn.dataset.fairydustEnhanced = 'true';
+                    });
+                };
+                
+                enhanceButtons();
+                
+                // Only add MutationObserver if not in React mode
+                if (!options.reactMode) {
+                    let enhanceTimeout;
+                    const observer = new MutationObserver(() => {
+                        clearTimeout(enhanceTimeout);
+                        enhanceTimeout = setTimeout(() => {
+                            enhanceButtons();
+                        }, 100);
+                    });
+                    observer.observe(document.body, {
+                        childList: true,
+                        subtree: true
+                    });
+                }
+            }
+            
+            // Auto-create account component if element exists
+            const accountElement = document.getElementById('fairydust-account');
+            if (accountElement) {
+                fairydust.createAccountComponent(accountElement, {
+                    onConnect: (user) => {
+                        console.log('[Fairydust] User connected:', user);
+                    },
+                    onDisconnect: () => {
+                        console.log('[Fairydust] User disconnected');
+                    }
+                });
+            }
+            
+            console.log('[Fairydust] Manually initialized! App ID:', appId);
+            return fairydust;
+        };
+        
+        // Allow disabling auto-initialization for React/SPA frameworks
+        if (window.fairydustNoAutoInit) {
+            console.log('[Fairydust] Auto-initialization disabled. Use manual initialization.');
+            return;
+        }
+        
         window.addEventListener('DOMContentLoaded', () => {
             const appId = getAppIdFromScript();
             if (!appId) {
@@ -1011,9 +1143,14 @@
             };
             // Enhance buttons on load
             enhanceButtons();
-            // Also support dynamically added buttons
+            // Support dynamically added buttons (with throttling to prevent React conflicts)
+            let enhanceTimeout;
             const observer = new MutationObserver(() => {
-                enhanceButtons();
+                // Throttle enhancements to prevent infinite loops with React
+                clearTimeout(enhanceTimeout);
+                enhanceTimeout = setTimeout(() => {
+                    enhanceButtons();
+                }, 100);
             });
             observer.observe(document.body, {
                 childList: true,
