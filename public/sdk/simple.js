@@ -908,7 +908,7 @@
         // Manual refresh method for account components
         async refreshAccountComponents() {
             for (const component of this.accountComponents) {
-                await component.refreshState();
+                await component.refresh();
             }
         }
     }
