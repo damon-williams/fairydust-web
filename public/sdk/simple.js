@@ -172,7 +172,7 @@
         <button class="fairydust-close">&times;</button>
         <div class="fairydust-auth">
           <h2>Powered by fairydust</h2>
-          <p><strong>${this.props.appName}</strong> uses fairydust to help cover AI costs. New users get 25 DUST for free by providing phone or email.</p>
+          <p><strong>${this.props.appName}</strong> uses fairydust to help cover AI costs. New users get 25 DUST for free by providing their email.</p>
           
           <form class="fairydust-form" data-testid="auth-form">
             <div>
@@ -182,7 +182,7 @@
               <input 
                 type="text" 
                 class="fairydust-input" 
-                placeholder="Enter email or phone number"
+                placeholder="Enter your email address"
                 data-testid="identifier-input"
                 required
               />
@@ -232,7 +232,7 @@
             </button>
             
             <button type="button" class="fairydust-button-secondary" data-testid="back-button">
-              Use Different ${this.identifierType === 'email' ? 'Email' : 'Phone'}
+              Use Different Email
             </button>
             
             <div class="fairydust-error" style="display: none;" data-testid="error-message"></div>
@@ -350,12 +350,12 @@
             });
         }
         detectIdentifierType(value) {
-            // Simple email pattern
+            // Only support email for now
             if (value.includes('@') && value.includes('.')) {
                 return 'email';
             }
-            // Assume phone if it starts with + or contains only digits/spaces/dashes
-            return 'phone';
+            // Return email as default since we're not supporting phone yet
+            return 'email';
         }
         showError(errorDiv, message) {
             errorDiv.textContent = message;
@@ -773,6 +773,10 @@
                 // Update user balance
                 if (this.user) {
                     this.user.dust_balance -= this.props.dustCost;
+                }
+                // Refresh account components to show new balance
+                if (window.fairydust) {
+                    await window.fairydust.refreshAccountComponents();
                 }
                 this.closeModal(modal);
                 this.props.onSuccess?.(transaction);
