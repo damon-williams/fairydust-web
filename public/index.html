@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>fairydust - Discover the Magic of AI</title>
+    <title>fairydust - Coming Soon</title>
     <style>
         * {
             margin: 0;
@@ -17,22 +17,21 @@
             color: #333;
             background: linear-gradient(135deg, #fef7ff 0%, #f0f9ff 100%);
             min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 500px;
             margin: 0 auto;
-            padding: 20px;
-        }
-        
-        header {
+            padding: 40px 20px;
             text-align: center;
-            padding: 60px 0;
         }
         
         .logo {
-            font-size: 4em;
-            margin-bottom: 20px;
+            font-size: 5em;
+            margin-bottom: 30px;
         }
         
         h1 {
@@ -43,175 +42,123 @@
         }
         
         .tagline {
-            font-size: 1.5em;
+            font-size: 1.3em;
             color: #666;
-            margin-bottom: 40px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .apps-section {
-            margin: 80px 0;
-        }
-        
-        .section-title {
-            text-align: center;
-            font-size: 2.5em;
-            color: #7c3aed;
-            margin-bottom: 60px;
-        }
-        
-        .apps-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 40px;
-            margin-bottom: 60px;
-        }
-        
-        .app-card {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 2px solid transparent;
-        }
-        
-        .app-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(124, 58, 237, 0.15);
-            border-color: #7c3aed;
-        }
-        
-        .app-icon {
-            font-size: 4em;
-            margin-bottom: 20px;
-            display: block;
-        }
-        
-        .app-title {
-            font-size: 1.8em;
-            color: #333;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-        
-        .app-description {
-            color: #666;
-            margin-bottom: 30px;
+            margin-bottom: 50px;
             line-height: 1.5;
         }
         
-        .app-link {
+        .signup-form {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .form-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .form-description {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        input[type="email"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        input[type="email"]:focus {
+            outline: none;
+            border-color: #7c3aed;
+        }
+        
+        .signup-button {
             background: #7c3aed;
             color: white;
             padding: 15px 30px;
-            text-decoration: none;
-            border-radius: 50px;
-            display: inline-block;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
             font-weight: 600;
+            cursor: pointer;
+            width: 100%;
             transition: background 0.3s ease;
         }
         
-        .app-link:hover {
+        .signup-button:hover {
             background: #6b2ec5;
         }
         
-        .developer-section {
-            text-align: center;
-            padding: 80px 0;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 20px;
-            margin: 80px 0;
+        .signup-button:active {
+            transform: translateY(1px);
         }
         
-        .developer-cta {
-            background: #333;
-            color: white;
-            padding: 20px 40px;
-            text-decoration: none;
-            border-radius: 50px;
-            display: inline-block;
-            font-weight: 600;
-            font-size: 1.1em;
-            transition: background 0.3s ease;
-        }
-        
-        .developer-cta:hover {
-            background: #555;
-        }
-        
-        footer {
-            text-align: center;
-            padding: 40px 0;
+        .coming-soon {
             color: #666;
+            font-size: 0.9em;
         }
         
         @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
             h1 {
                 font-size: 2.5em;
             }
             
-            .tagline {
-                font-size: 1.2em;
+            .logo {
+                font-size: 4em;
             }
             
-            .apps-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .app-card {
-                padding: 30px;
+            .signup-form {
+                padding: 30px 20px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <div class="logo">🧚‍♀️</div>
-            <h1>fairydust</h1>
-            <p class="tagline">Discover the magic of AI-powered apps that make everyday tasks delightful</p>
-        </header>
+        <div class="logo">🧚‍♀️</div>
+        <h1>fairydust</h1>
+        <p class="tagline">Discover the magic</p>
         
-        <section class="apps-section">
-            <h2 class="section-title">Magical Apps Powered by AI</h2>
+        <div class="signup-form">
+            <h2 class="form-title">Join the Beta</h2>
+            <p class="form-description">Enter your email to be invited to the beta</p>
             
-            <div class="apps-grid">
-                <div class="app-card">
-                    <span class="app-icon">🧘‍♀️</span>
-                    <h3 class="app-title">Yoga Playlists</h3>
-                    <p class="app-description">AI-curated music playlists perfectly matched to your yoga practice. Find your flow with the perfect soundtrack.</p>
-                    <a href="https://yoga-playlist-app.vercel.app/" class="app-link" target="_blank">Start Your Practice</a>
+            <form>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
                 </div>
                 
-                <div class="app-card">
-                    <span class="app-icon">👨‍🍳</span>
-                    <h3 class="app-title">Recipe Agent</h3>
-                    <p class="app-description">Your AI cooking companion that creates personalized recipes based on your ingredients, dietary needs, and cravings.</p>
-                    <a href="https://recipe-agent-team-production.up.railway.app/" class="app-link" target="_blank">Cook Something Amazing</a>
-                </div>
-                
-                <div class="app-card">
-                    <span class="app-icon">😂</span>
-                    <h3 class="app-title">Dad Jokes</h3>
-                    <p class="app-description">AI-generated dad jokes that are so bad, they're good. Perfect for breaking the ice or making someone groan with laughter.</p>
-                    <a href="https://dad-joke-generator-eta.vercel.app/" class="app-link" target="_blank">Tell Me a Joke</a>
-                </div>
-            </div>
-        </section>
+                <button type="submit" class="signup-button">Request Beta Invite</button>
+            </form>
+        </div>
         
-        <section class="developer-section">
-            <h2 style="margin-bottom: 20px; color: #333;">Build Your Own Magic</h2>
-            <p style="margin-bottom: 30px; color: #666; font-size: 1.1em;">Ready to create AI-powered apps with simple micropayments?</p>
-            <a href="/developer" class="developer-cta">Developer Documentation</a>
-        </section>
-        
-        <footer>
-            <p>&copy; 2024 fairydust. Making AI magical, one app at a time.</p>
-        </footer>
     </div>
 </body>
 </html>
