@@ -6,7 +6,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Development
 - `npm run dev` - Start local development server (uses `npx serve public`)
-- `npm install` - Install dependencies (minimal - only `serve` package)
 
 ### Build
 - `npm run build` - No actual build process needed (echoes message)
@@ -14,125 +13,69 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Architecture
 
-**Fairydust Web** is a static website serving two main purposes:
-1. Consumer homepage showcasing AI-powered apps using fairydust
-2. SDK distribution and developer documentation platform
+**Fairydust Web** is a simple static landing page for the fairydust product.
 
 ### Core Structure
 ```
 public/
-├── index.html              # Consumer homepage
-├── fairydust.css          # SDK component styles
-├── sdk/                   # SDK files in multiple formats
-│   ├── simple.js         # Auto-enhanced version (recommended)
-│   ├── index.umd.js      # Universal module for browsers  
-│   ├── index.esm.js      # ES modules
-│   └── index.js          # CommonJS
-├── developer/            # Developer documentation and demos
-└── components/           # Individual component demos
+├── index.html              # Landing page with HubSpot signup form
+├── images/                 # Brand assets
+│   ├── fairy_icon.png     # Logo icon
+│   └── fairydust-wordmark.png  # Text logo
+└── legal/                 # Legal documents
+    ├── privacy-v1.0.0.html    # Privacy policy
+    └── terms-v1.0.0.html      # Terms of service
 ```
 
 ### Architecture Principles
 - **Pure static site** - No build process, all files served directly
-- **Multiple SDK formats** for different integration needs
-- **Auto-enhancement pattern** - Components automatically enhance existing HTML elements
-- **Vercel hosting** with CORS headers configured for SDK distribution
+- **HubSpot integration** - Uses embedded HubSpot forms for lead capture
+- **Vercel hosting** - Simple static file hosting
 
-## SDK Components
+## Current Implementation
 
-### Account Component
-- Shows user connection status and DUST balance
-- Auto-enhances elements with `fairydust-account` class
-- Handles authentication state and balance display
+### Landing Page Features
+- **Coming Soon Design** - Purple gradient background with centered content
+- **HubSpot Form Integration** - Embedded signup form for early access
+- **Responsive Design** - Mobile-optimized with Inter font family
+- **Brand Assets** - Fairy icon and wordmark logos
+- **Legal Pages** - Privacy policy and terms of service
 
-### Button Component  
-- Handles micropayments with DUST tokens
-- Auto-enhances elements with `fairydust-button` class
-- Supports skip confirmation for frequent users
-- Configurable styling and behavior
-
-### Authentication Component
-- Two-step OTP verification (email → phone/authenticator)
-- Modal-based UI with input validation
-- Auto-enhances elements with `fairydust-auth` class
-
-### Purchase Component (Planned)
-- For buying DUST tokens with traditional payment methods
-
-## Integration Methods
-
-### Simple HTML Integration (Recommended)
-```html
-<script src="https://fairydust-web.vercel.app/sdk/simple.js"></script>
-<div class="fairydust-account"></div>
-<button class="fairydust-button" data-amount="5">Buy for 5 DUST</button>
-```
-
-### React/SPA Integration
-```javascript
-import { initializeFairydust } from 'https://fairydust-web.vercel.app/sdk/index.esm.js';
-await initializeFairydust();
-```
-
-### Programmatic Creation
-```javascript
-const accountComponent = fairydust.createAccount(container, options);
-const buttonComponent = fairydust.createButton(container, options);
-```
-
-## API Endpoints
-
-### Production (Railway)
-- Authentication: `https://fairydust-auth-production.up.railway.app`
-- Ledger: `https://fairydust-ledger-production.up.railway.app`
-- Payment: `https://fairydust-payment-production.up.railway.app`
-
-### Development (Local)
-- All services: `http://localhost:3000` (when running locally)
+### HubSpot Configuration
+- Portal ID: `243159225`
+- Form ID: `fbafba59-8ea7-49c9-9be0-cfcb82c57d78`
+- Region: `na2`
+- Form script loaded from: `https://js-na2.hsforms.net/forms/embed/243159225.js`
 
 ## Key Configuration
 
 ### Vercel Deployment
 - Automatic deployment from `main` branch
-- CORS headers configured in `vercel.json` for SDK distribution
 - Static file serving from `public/` directory
+- Simple `vercel.json` with `"public": true`
 
-### User Experience Features
-- New users receive 25 free DUST tokens
-- Skip confirmation option for frequent users
-- Seamless authentication flow across components
-- Mobile-responsive design
+### Package.json
+- Minimal configuration with no dependencies
+- Development server uses `npx serve public`
+- No build process required
 
 ## Development Notes
 
-### SDK Development
-- All SDK logic is in `public/sdk/` files
-- Components use class-based enhancement pattern
-- Event-driven architecture for component communication
-- Error handling with user-friendly messages
-
 ### Styling
-- `fairydust.css` contains all component styles
-- Components inherit app styling by default
-- CSS custom properties for theming support
+- All CSS is inline in `index.html`
+- Uses Inter font from Google Fonts
+- Custom HubSpot form styling overrides
+- Purple theme (`#7c3aed`) with gradient background
 
-### Browser Compatibility
-- Safari compatibility issues resolved in recent updates
-- CORS properly configured for cross-origin SDK usage
-- Mobile browser support included
-
-### Recent Focus Areas
-- Critical SDK bug fixes (component methods, CORS)
-- Authentication UI improvements
-- React/SPA compatibility enhancements
-- Railway backend service migration
-- Safari browser compatibility
+### Form Styling
+- Custom CSS overrides for HubSpot form elements
+- Consistent button and input styling
+- Responsive design for mobile devices
 
 ## Testing
 
-Currently no formal test suite. Manual testing workflow:
+Manual testing workflow:
 1. Start local server with `npm run dev`
-2. Test components on `http://localhost:3000/developer/`
-3. Verify SDK integration on homepage
-4. Test authentication flow end-to-end
-5. Validate micropayment functionality
+2. Test form submission on `http://localhost:3000`
+3. Verify responsive design on mobile
+4. Check HubSpot form integration
